@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-import { FormGroup, FormControl, InputGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { users } from './users.js';
+
+import { FormGroup, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 
@@ -8,12 +10,6 @@ class LoginForm extends Component {
   constructor(props) {
     super(props);
 
-    this.user = {
-      'fn' : 'John',
-      'ln' : 'Doe',
-      'username' : 'johndoe@gmail.com',
-      'password' : 'password'
-    }
     this.loginStatus = false;
 
     this.handleLoginClick = this.handleLoginClick.bind(this);
@@ -28,9 +24,15 @@ class LoginForm extends Component {
 
   handleLoginClick(event) {
     event.preventDefault();
-    if(this.user.username === this.state.username && this.user.password === this.state.password) {
+    event.stopPropagation();
+
+    let user = users.filter((user)=>{
+      return user.username === this.state.username;
+    })[0]; //On the assumption that this is a single user
+    
+    if(user && user.password === this.state.password) {
       this.loginStatus = true;
-      this.props.onUserLogin(this.user);
+      this.props.onUserLogin(user);
     } else {
       this.loginStatus = false;
       console.log("Login Failed");
@@ -60,17 +62,16 @@ class LoginForm extends Component {
             <h2>LOGIN</h2>
       <form>
         <FormGroup bsSize="small">
-          <ControlLabel className="text-left show">Email Address</ControlLabel>
-          <InputGroup>  
-            <InputGroup.Addon>@</InputGroup.Addon>
-            <FormControl
-              type="email"
-              name="username"
-              placeholder="Enter your email address"
-              value={this.state.username}
-              onChange={this.handleInputChange}
-            />
-          </InputGroup>
+          <ControlLabel className="text-left show">Username</ControlLabel>
+          
+          <FormControl
+            type="text"
+            name="username"
+            placeholder="Enter your username"
+            value={this.state.username}
+            onChange={this.handleInputChange}
+          />
+          
           <br/>
           <ControlLabel className="text-left show">Password</ControlLabel>
           <FormControl
