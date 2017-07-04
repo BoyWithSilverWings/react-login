@@ -11,6 +11,9 @@ class SignupForm extends Component {
     super(props);
 
     this.SignupStatus = false;
+    this.passwordMatchError = null;
+    this.usernameError = null;
+    this.errors = [];
 
     this.handleSignupClick = this.handleSignupClick.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -30,6 +33,29 @@ class SignupForm extends Component {
     event.preventDefault();
     event.stopPropagation();
 
+    if(!(this.state.password && this.state.password2)) {
+      this.passwordMatchError = "error";
+      this.errors.push("Please enter password!");
+    } else if(this.state.password !== this.state.password2) {
+      this.passwordMatchError = "error";
+      this.errors.push("Passwords do not match!");
+    } else {
+      this.passwordMatchError = "success";
+    }
+
+    if(!this.state.username) {
+      this.usernameError = "error";
+      this.errors.push("Please enter username!");
+    } else if(!users.filter((user)=>{
+      return user.username === this.state.username;
+    })[0]) {
+      this.usernameError = "error";
+      this.errors.push("Please enter username");
+    } else {
+      this.usernameError = "null";
+    }
+
+    console.log(this.errors);
     let user = {
       fn: this.state.name,
       email: this.state.email,
@@ -39,7 +65,7 @@ class SignupForm extends Component {
     users.push(user);
     
     this.setState({
-      signUpComplete: true
+      showErrors: true
     });
   }
 
@@ -54,9 +80,7 @@ class SignupForm extends Component {
   }
 
   render() {
-    let FormError = null;
-    if(this.state.showErrors)
-      FormError = <HelpBlock>Signup Successful.</HelpBlock>
+    
     return (
         <div>
           <h2>REGISTER</h2>
@@ -82,16 +106,17 @@ class SignupForm extends Component {
                 onChange={this.handleInputChange}
               />
               <br/>
-              <ControlLabel className="text-left show">Username</ControlLabel>
-              
-              <FormControl
-                type="text"
-                name="username"
-                placeholder="Enter your username"
-                value={this.state.username}
-                onChange={this.handleInputChange}
-              />
-              
+              <FormGroup validationState={this.usernameError}>
+                <ControlLabel className="text-left show">Username</ControlLabel>
+                
+                <FormControl
+                  type="text"
+                  name="username"
+                  placeholder="Enter your username"
+                  value={this.state.username}
+                  onChange={this.handleInputChange}
+                />
+              </FormGroup>
               <br/>
               <ControlLabel className="text-left show">Password</ControlLabel>
               <FormControl
@@ -103,16 +128,23 @@ class SignupForm extends Component {
                 onChange={this.handleInputChange}
               />
               <br/>
-              <ControlLabel className="text-left show">Repeat Password</ControlLabel>
-              <FormControl
-                type="password"
-                name="password2"
-                placeholder="Enter your password"
-                value={this.state.password2}
-                onChange={this.handleInputChange}
-              />
+              <FormGroup validationState={this.passwordMatchError}>
+                <ControlLabel className="text-left show">Repeat Password</ControlLabel>
+                <FormControl
+                  type="password"
+                  name="password2"
+                  placeholder="Enter your password"
+                  value={this.state.password2}
+                  onChange={this.handleInputChange}
+                />
+              </FormGroup>
               <div className="divider"></div>
-              { FormError }
+              <ul>{
+                    this.errors.map((err)=> {
+                      return <li>{err}</li>
+                    })
+                  }
+              </ul>
               <Button 
                 bsStyle="primary" 
                 bsSize="large" 
@@ -124,6 +156,7 @@ class SignupForm extends Component {
               </Button>
             </FormGroup>
         </form>
+        
       </div>
     );
   }
