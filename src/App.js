@@ -11,6 +11,8 @@ class Form extends Component {
     super(props);
 
     this.user = {
+      'fn' : 'John',
+      'ln' : 'Doe',
       'username' : 'johndoe@gmail.com',
       'password' : 'password'
     }
@@ -30,7 +32,7 @@ class Form extends Component {
     event.preventDefault();
     if(this.user.username === this.state.username && this.user.password === this.state.password) {
       this.loginStatus = true;
-      console.log("Logged in");
+      this.props.onUserLogin(this.user);
     } else {
       this.loginStatus = false;
       console.log("Login Failed");
@@ -55,6 +57,9 @@ class Form extends Component {
     if(this.state.showErrors)
       FormError = <HelpBlock>Login Failed.</HelpBlock>
     return (
+      <div className="row">
+          <Col md={6} sm={10} mdPush={3} smPush={1}>
+            <h2>LOGIN</h2>
       <form>
         <FormGroup bsSize="small">
           <ControlLabel className="text-left show">Email Address</ControlLabel>
@@ -91,25 +96,48 @@ class Form extends Component {
           </Button>
         </FormGroup>
       </form>
+      </Col>
+      </div>
     );
   }
 }
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    
+    this.isUserLoggedIn = false;
+
+    this.state = {
+      user: null
+    }
+
+    this.handleLoginForm = this.handleLoginForm.bind(this);
+  }
+
+  handleLoginForm(user) {
+    console.log("Logged in "+user.fn);
+    this.isUserLoggedIn = true;
+    this.setState({
+      user: user
+    });
+  }
+
   render() {
+    let greeting = 'to React';
+    let content = <Form onUserLogin={this.handleLoginForm}/>;
+    if(this.isUserLoggedIn) {
+      greeting = this.state.user.fn;
+      content = <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, beatae labore dignissimos ipsam commodi delectus modi aspernatur sapiente similique ea ex, fugiat corporis at recusandae nam error dicta minima dolorum.</p>
+    }
     return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>Welcome { greeting }</h2>
         </div>
         <br/>
-        <div className="">
-          <Col md={6} sm={10} mdPush={3} smPush={1}>
-            <h2>LOGIN</h2>
-            <Form/>
-          </Col>
-        </div>
+        { content }        
       </div>
     );
   }
