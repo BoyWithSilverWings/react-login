@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import LoginForm from './LoginForm.js';
+import UserScreen from './UserScreen.js';
 
 
 class App extends Component {
@@ -15,12 +15,13 @@ class App extends Component {
       user: null
     }
 
-    this.handleLoginForm = this.handleLoginForm.bind(this);
+    this.handleUserLogin = this.handleUserLogin.bind(this);
   }
 
-  handleLoginForm(user) {
-    console.log("Logged in "+user.fn);
+  handleUserLogin(user) {
+    
     this.isUserLoggedIn = true;
+
     this.setState({
       user: user
     });
@@ -28,7 +29,7 @@ class App extends Component {
 
   render() {
     let greeting = 'to React';
-    let content = <LoginForm onUserLogin={this.handleLoginForm}/>;
+    let content = <UserScreen onUserLogin={this.handleUserLogin}/>;
     if(this.isUserLoggedIn) {
       greeting = this.state.user.fn;
       content = <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, beatae labore dignissimos ipsam commodi delectus modi aspernatur sapiente similique ea ex, fugiat corporis at recusandae nam error dicta minima dolorum.</p>

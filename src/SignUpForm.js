@@ -5,40 +5,41 @@ import { Button } from 'react-bootstrap';
 
 import { users } from './users.js';
 
-class LoginForm extends Component {
+class SignupForm extends Component {
 
   constructor(props) {
     super(props);
 
-    this.loginStatus = false;
+    this.SignupStatus = false;
 
-    this.handleLoginClick = this.handleLoginClick.bind(this);
+    this.handleSignupClick = this.handleSignupClick.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     
     this.state = {
       showErrors: false,
+      name: '',
       username: '',
-      password: ''
+      password: '',
+      email: '',
+      password2: '',
+      signUpComplete: false 
     }
   }
 
-  handleLoginClick(event) {
+  handleSignupClick(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    let user = users.filter((user)=>{
-      return user.username === this.state.username;
-    })[0]; //On the assumption that this is a single user
+    let user = {
+      fn: this.state.name,
+      email: this.state.email,
+      username: this.state.username,
+      password: this.state.password
+    };
+    users.push(user);
     
-    if(user && user.password === this.state.password) {
-      this.loginStatus = true;
-      this.props.onUserLogin(user);
-    } else {
-      this.loginStatus = false;
-      console.log("Login Failed");
-    }
     this.setState({
-      showErrors: !this.loginStatus
+      signUpComplete: true
     });
   }
 
@@ -55,12 +56,32 @@ class LoginForm extends Component {
   render() {
     let FormError = null;
     if(this.state.showErrors)
-      FormError = <HelpBlock>Login Failed.</HelpBlock>
+      FormError = <HelpBlock>Signup Successful.</HelpBlock>
     return (
         <div>
-          <h2>LOGIN</h2>
+          <h2>REGISTER</h2>
           <form>
             <FormGroup bsSize="small">
+              <ControlLabel className="text-left show">Name</ControlLabel>
+              
+              <FormControl
+                type="text"
+                name="name"
+                placeholder="Enter your name"
+                value={this.state.name}
+                onChange={this.handleInputChange}
+              />
+              <br/>
+              <ControlLabel className="text-left show">Email</ControlLabel>
+              
+              <FormControl
+                type="text"
+                name="email"
+                placeholder="Enter your email"
+                value={this.state.email}
+                onChange={this.handleInputChange}
+              />
+              <br/>
               <ControlLabel className="text-left show">Username</ControlLabel>
               
               <FormControl
@@ -81,6 +102,15 @@ class LoginForm extends Component {
                 value={this.state.password}
                 onChange={this.handleInputChange}
               />
+              <br/>
+              <ControlLabel className="text-left show">Repeat Password</ControlLabel>
+              <FormControl
+                type="password"
+                name="password2"
+                placeholder="Enter your password"
+                value={this.state.password2}
+                onChange={this.handleInputChange}
+              />
               <div className="divider"></div>
               { FormError }
               <Button 
@@ -88,9 +118,9 @@ class LoginForm extends Component {
                 bsSize="large" 
                 type="submit"
                 block
-                onClick={this.handleLoginClick}
+                onClick={this.handleSignupClick}
               >
-                LOGIN
+                SIGN UP
               </Button>
             </FormGroup>
         </form>
@@ -99,4 +129,4 @@ class LoginForm extends Component {
   }
 }
 
-export default LoginForm;
+export default SignupForm;
